@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <routing name="Routing">
+            <routes pattern="$${sys:TLDDEBUG}">
+                <route key="false">
+                    <Console name="Console-info" target="SYSTEM_OUT">
+                        <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+                        <PatternLayout pattern="%highlight{%d{HH:mm:ss} [%level] %msg%n}{INFO=white}"/>
+                    </Console>
+                </route>
+                <route key="true">
+                    <Console name="Console-debug" target="SYSTEM_OUT">
+                        <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
+                        <PatternLayout
+                                pattern="%highlight{%d{HH:mm:ss.SSS} [%t] %-5level %class{36} %L %M - %msg%n}{INFO=white}"/>
+                    </Console>
+                </route>
+            </routes>
+        </routing>
+        <routing name="Main-Routing">
+            <routes pattern="*">
+                <route>
+                    <RollingFile name="Main-File" fileName="${sys:TLDCONF}/app.log"
+                                 filePattern="${sys:TLDCONF}/app-%d{yyyy-MM-dd}-%i.log">
+                        <PatternLayout>
+                            <Pattern>%d{HH:mm:ss.SSS} [%t] %-5level %class{36} %L %M - %msg%n</Pattern>
+                            <!-- <Pattern>%d %p %c{1.} [%t] %m%n</Pattern> -->
+                        </PatternLayout>
+                        <!-- <ClassNameRegexFilter regex=".*jetty.*" onMatch="DENY" onMismatch="ALLOW"/> -->
+                        <Policies>
+                            <OnStartupTriggeringPolicy/>
+                        </Policies>
+
+                    </RollingFile>
+                </route>
+            </routes>
+        </routing>
+        <routing name="Console-Routing">
+            <routes pattern="$${sys:TLDDEBUG}">
+                <route key="false">
+                    <File name="console-file-info" fileName="${sys:TLDCONF}/console.log">
+                        <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+                        <PatternLayout>
+                            <Pattern>%d{HH:mm:ss} [%level] %msg%n</Pattern>
+                            <!-- <Pattern>%d %p %c{1.} [%t] %m%n</Pattern> -->
+                        </PatternLayout>
+                    </File>
+                </route>
+                <route key="true">
+                    <File name="console-file-debug" fileName="${sys:TLDCONF}/console.log">
+                        <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
+                        <PatternLayout>
+                            <Pattern>%d{HH:mm:ss.SSS} [%t] %-5level %class{36} %L %M - %msg%n</Pattern>
+                            <!-- <Pattern>%d %p %c{1.} [%t] %m%n</Pattern> -->
+                        </PatternLayout>
+                    </File>
+                </route>
+            </routes>
+        </routing>
+    </Appenders>
+    <Loggers>
+        <root level="trace">
+            <appenderRef ref="Routing" level="debug"/>
+            <appenderRef ref="Main-Routing" level="debug"/>
+            <appenderRef ref="Console-Routing" level="debug"/>
+        </root>
+    </Loggers>
+</Configuration>
